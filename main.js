@@ -1,7 +1,5 @@
 function formatdate(str) {
     const excludeintervalregex = /^[-0-9T:+]+/
-    console.log(str.match(excludeintervalregex)[0])
-    console.log("new Date(\"" + str.match(excludeintervalregex)[0] + "\")")
     const date = new Date(str.match(excludeintervalregex)[0])
     return date.toString()
 }
@@ -38,17 +36,18 @@ function loadChart(url) {
         })
 }
 
-navigator.geolocation.getCurrentPosition((position) => {
-    console.log(position)
+navigator.geolocation.getCurrentPosition(position => {
     const baseUrl = 'https://api.weather.gov/points/'
-    latitude=position.coords.latitude.toFixed(5);
-    longitude=position.coords.longitude.toFixed(5);
+    const latitude = position.coords.latitude.toFixed(5);
+    const longitude = position.coords.longitude.toFixed(5);
     const url = baseUrl + latitude + ',' + longitude;
-    // const url = "https://api.weather.gov/gridpoints/BOX/8,49"
     fetch(url)
         .then(res => res.json())
         .then(obj => obj.properties.forecastGridData)
         .then(url => loadChart(url))
+}, err => {
+    alert("Using weather data from Albany NY")
+    loadChart("https://api.weather.gov/gridpoints/BOX/8,49")
 }
 )
 
