@@ -1,11 +1,11 @@
 # weatherapp
 
-Weather
-Temp
-Wind
-Precipitation (in inches expect)
-Sky cover
+- [ ] Weather
+- [ ] Temp
+- [ ] Wind
+- [ ] Precipitation (in inches expect)
+- [ ] Sky cover
 
-UV
+- [ ] UV
 
-Sunrise/sunset
+- [ ] Sunrise/sunset
