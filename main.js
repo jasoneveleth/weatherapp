@@ -1,16 +1,36 @@
 function requestlocation() {
-  if (navigator.geolocation) {
-    // navigator.geolocation.getCurrentPosition(initSkyGraph)
-      console.log("got location")
-  } else { 
-    alert("Geolocation is not supported by this browser.")
+return new Promise( function(resolve, reject){
+    if (navigator.geolocation) {
+        resolve(navigator.geolocation.getCurrentPosition(getGridUrl));
+        console.log("got location")
+    } else { 
+	reject("Geolocation is not supported by this browser");
+        //alert("Geolocation is not supported by this browser.")
   }
+  })	
 }
 
-document.addEventListener("DOMContentLoaded", requestlocation);
+document.addEventListener("DOMContentLoaded", requestlocation().then(loadChart));
 
 // url = 'https://api.weather.gov/points/42,-73'
-const url = 'https://api.weather.gov/gridpoints/BOX/8,49'
+url = 'https://api.weather.gov/gridpoints/BOX/8,49'
+baseUrl = 'https://api.weather.gov/points/'
+function getGridUrl(position){
+    latitude=position.coords.latitude.toFixed(5);
+    longitude=position.coords.longitude.toFixed(5);
+    baseUrl += latitude + ',' + longitude;
+    console.log(baseUrl);
+    fetch(baseUrl)
+    .then(res => res.json())
+    .then((obj) => {
+        url = obj.properties.forecastGridData;
+        console.log(url);
+     })
+}
+
+
+
+
 const iso8601dateregex = /(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})\+(\d{2}:\d{2})\/PT(\d)H/
 // year, month, day, hour, min, sec, offset (truncated down), interval (truncated to hours)
 // 1       2     3     4     5   6      7                       8
@@ -20,6 +40,7 @@ function formatdate(str) {
     return date[3] + " " + ((Number(date[4]) + 20) % 24).toString() + ":00" // subtract 4 to get ny time
 }
 
+function loadChart(){
 fetch(url)
 .then(res => res.json())
 .then((obj) => {
@@ -49,3 +70,4 @@ fetch(url)
         config
     );
 })
+}
