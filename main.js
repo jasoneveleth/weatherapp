@@ -36,8 +36,9 @@ const iso8601dateregex = /(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})\+(\d{2
 // 1       2     3     4     5   6      7                       8
 
 function formatdate(str) {
-    const date = str.match(iso8601dateregex)
-    return date[3] + " " + ((Number(date[4]) + 20) % 24).toString() + ":00" // subtract 4 to get ny time
+    const matches = str.match(iso8601dateregex)
+    const date = new Date(matches[1], matches[2], matches[3], matches[4], matches[5], matches[6], 0)
+    return date.toString()
 }
 
 function loadChart(){
