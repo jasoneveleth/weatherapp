@@ -3,13 +3,13 @@ function loadChart(url) {
     fetch(url)
         .then(res => res.json())
         .then((obj) => {
+            const weather = obj.properties
+
             function extractPoint(acc, val) {
                 const iso8601 = val.validTime.match(/^[-0-9T:+]+/)[0]
                 const date = new Date(iso8601)
                 return acc.concat([{x: date.valueOf(), y: val.value}])
             }
-
-            const weather = obj.properties
 
             const skyCover = weather.skyCover.values.reduce(extractPoint, [])
             const precip = weather.probabilityOfPrecipitation.values.reduce(extractPoint, [])
@@ -57,7 +57,7 @@ function loadChart(url) {
                             // https://stackoverflow.com/questions/67322201/chart-js-v3-x-time-series-on-x-axis/67405387#67405387
                             type: "time",  // <-- "time" instead of "timeseries"
                             min: Date.now(),
-                            max: Date.now() + (24 * 60 * 60 * 1000 * 4),
+                            max: Date.now() + (24 * 60 * 60 * 1000 * 2),
                         },
                         y: {
                             title: {
@@ -65,10 +65,7 @@ function loadChart(url) {
                                 display: true,
                             },
                             ticks: {
-                                // Include a percent sign in the ticks
-                                callback: function(value, index, values) {
-                                    return value + '%';
-                                }
+                                callback: (value, index, values) => (value + '%')
                             },
                             min: 0,
                             max: 100
