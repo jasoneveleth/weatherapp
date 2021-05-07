@@ -91,11 +91,8 @@ fetch("https://api.ipify.org?format=json")
     .then(res => res.json())
     .then(obj => fetch("http://ip-api.com/json/" + obj.ip.toString()))
     .then(res => res.json())
-    .then(obj => {
-        const latitude = obj.lat.toFixed(5);
-        const longitude = obj.lon.toFixed(5);
-        return fetch('https://api.weather.gov/points/' + latitude + ',' + longitude)
-    })
+    .then(obj => 'https://api.weather.gov/points/' + obj.lat.toFixed(5) + ',' + obj.lon.toFixed(5))
+    .then(url => fetch(url))
     .then(res => res.json())
     .then(obj => obj.properties.forecastGridData)
     .then(url => loadChart(url))
