@@ -3,55 +3,43 @@ function loadChart(url) {
     fetch(url)
         .then(res => res.json())
         .then((obj) => {
-            function formatdate(str) {
-                const iso8601 = str.match(/^[-0-9T:]+/)[0]
-                const date = new Date(iso8601)
-                const day2str = { 0:"Sun", 1:"Mon", 2:"Tue", 3:"Wed", 4:"Thu", 5:"Fri", 6:"Sat" }
-                return day2str[date.getDay()] + " " + date.getHours() + ":00"
-            }
-            function extractTime(acc, val) {
-                const iso8601 = val.validTime.match(/^[-0-9T:]+/)[0] + "Z"
-                return acc.concat([iso8601])
-            }
             function extractPoint(acc, val) {
-                const iso8601 = val.validTime.match(/^[-0-9T:]+/)[0] + "Z"
+                const iso8601 = val.validTime.match(/^[-0-9T:+]+/)[0]
                 const date = new Date(iso8601)
                 return acc.concat([{x: date.valueOf(), y: val.value}])
-            }
-            function extractValue(acc, val) {
-                return acc.concat([val.value])
             }
 
             const weather = obj.properties
 
-            // const times = weather.skyCover.values.reduce(extractTime, [])
             const skyCover = weather.skyCover.values.reduce(extractPoint, [])
-            console.log(skyCover)
+            const precip = weather.probabilityOfPrecipitation.values.reduce(extractPoint, [])
 
             const config = {
                 type: 'line',
                 data: { 
-                    // labels: times, 
                     datasets: [{
                         label: 'Sky cover',
-                        backgroundColor: 'rgb(255, 99, 132)',
-                        borderColor: 'rgb(255, 99, 132)',
+                        backgroundColor: 'rgb(117, 117, 117)',
+                        borderColor: 'rgb(117, 117, 117)',
                         data: skyCover,
+                    }, {
+                        label: 'Precipitation',
+                        backgroundColor: 'rgb(97, 175, 239)',
+                        borderColor: 'rgb(97, 175, 239)',
+                        data: precip,
                     }] 
                 },
                 options: {
+                    interaction: {
+                        mode: 'x',
+                        intersect: false,
+                    },
                     scales: {
                         x: {
+                            // https://stackoverflow.com/questions/67322201/chart-js-v3-x-time-series-on-x-axis/67405387#67405387
                             type: "time",  // <-- "time" instead of "timeseries"
                             min: Date.now(),
                             max: Date.now() + (24 * 60 * 60 * 1000 * 4),
-                            time: {
-                                unit: "hour",  // <-- that does the trick here
-                                displayFormats: {
-                                    hour: "D-M-Y H:00:00"
-                                },
-                                tooltipFormat: "D-M-Y H:00:00"// <-- same format for tooltip
-                            }
                         },
                         y: {
                             title: {
@@ -70,10 +58,7 @@ function loadChart(url) {
                     }
                 }
             }
-            var myChart = new Chart(
-                document.getElementById('myChart'),
-                config
-            );
+            var myChart = new Chart(document.getElementById('myChart'), config);
         })
 }
 
