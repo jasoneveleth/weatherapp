@@ -39,11 +39,13 @@ function loadChart(url) {
                         backgroundColor: 'rgb(117, 117, 117)',
                         borderColor: 'rgb(117, 117, 117)',
                         data: skyCover,
+                        parse: false,
                     }, {
                         label: 'Precipitation',
                         backgroundColor: 'rgb(97, 175, 239)',
                         borderColor: 'rgb(97, 175, 239)',
                         data: precip,
+                        parse: false,
                     }] 
                 },
                 plugins: [plugin],
