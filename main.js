@@ -1,7 +1,8 @@
 function formatdate(str) {
-    const excludeintervalregex = /^[-0-9T:+]+/
-    const date = new Date(str.match(excludeintervalregex)[0])
-    return date.toString()
+    const iso8601 = str.match(/^[-0-9T:+]+/)[0]
+    const date = new Date(iso8601)
+    const day2str = { 0:"Sun", 1:"Mon", 2:"Tue", 3:"Wed", 4:"Thu", 5:"Fri", 6:"Sat" }
+    return day2str[date.getDay()] + " " + date.getHours() + ":00"
 }
 
 function loadChart(url) {
