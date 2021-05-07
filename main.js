@@ -28,7 +28,24 @@ function loadChart(url) {
             const config = {
                 type: 'line',
                 data,
-                options: {}
+                options: {
+                    scales: {
+                        y: {
+                            title: {
+                                text: "% of sky cover/% chance of rain",
+                                display: true,
+                            },
+                            ticks: {
+                                // Include a percent sign in the ticks
+                                callback: function(value, index, values) {
+                                    return value + '%';
+                                }
+                            },
+                            min: 0,
+                            max: 100
+                        }
+                    }
+                }
             }
             var myChart = new Chart(
                 document.getElementById('myChart'),
