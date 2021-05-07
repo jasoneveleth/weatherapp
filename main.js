@@ -87,21 +87,19 @@ function loadChart(url) {
         })
 }
 
-// https://stackoverflow.com/questions/16202077/high-accuracy-geolocation-html5
-$.getJSON("https://api.ipify.org?format=json", function(data) {
-    console.log(data.ip)
-})
-navigator.geolocation.getCurrentPosition(position => {
-    const baseUrl = 'https://api.weather.gov/points/'
-    const latitude = position.coords.latitude.toFixed(5);
-    const longitude = position.coords.longitude.toFixed(5);
-    const url = baseUrl + latitude + ',' + longitude;
-    fetch(url)
-        .then(res => res.json())
-        .then(obj => obj.properties.forecastGridData)
-        .then(url => loadChart(url))
-}, err => {
-    alert("Using weather data from Albany NY")
-    loadChart("https://api.weather.gov/gridpoints/BOX/8,49")
-}
-)
+fetch("https://api.ipify.org?format=json")
+    .then(res => res.json())
+    .then(obj => fetch("http://ip-api.com/json/" + obj.ip.toString()))
+    .then(res => res.json())
+    .then(obj => {
+        const latitude = obj.lat.toFixed(5);
+        const longitude = obj.lon.toFixed(5);
+        return fetch('https://api.weather.gov/points/' + latitude + ',' + longitude)
+    })
+    .then(res => res.json())
+    .then(obj => obj.properties.forecastGridData)
+    .then(url => loadChart(url))
+    .catch(err => {
+        alert("Defaulting to Albany NY")
+        loadChart("https://api.weather.gov/gridpoints/BOX/8,49")
+    })
