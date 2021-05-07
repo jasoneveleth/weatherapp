@@ -87,6 +87,10 @@ function loadChart(url) {
         })
 }
 
+// https://stackoverflow.com/questions/16202077/high-accuracy-geolocation-html5
+$.getJSON("https://api.ipify.org?format=json", function(data) {
+    console.log(data.ip)
+})
 navigator.geolocation.getCurrentPosition(position => {
     const baseUrl = 'https://api.weather.gov/points/'
     const latitude = position.coords.latitude.toFixed(5);
