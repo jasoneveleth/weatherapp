@@ -15,7 +15,8 @@ function loadChart(url) {
             }
             function extractPoint(acc, val) {
                 const iso8601 = val.validTime.match(/^[-0-9T:]+/)[0] + "Z"
-                return acc.concat([{t: iso8601, y: val.value}])
+                const date = new Date(iso8601)
+                return acc.concat([{x: date.valueOf(), y: val.value}])
             }
             function extractValue(acc, val) {
                 return acc.concat([val.value])
@@ -23,13 +24,14 @@ function loadChart(url) {
 
             const weather = obj.properties
 
-            const times = weather.skyCover.values.reduce(extractTime, [])
-            const skyCover = weather.skyCover.values.reduce(extractValue, [])
+            // const times = weather.skyCover.values.reduce(extractTime, [])
+            const skyCover = weather.skyCover.values.reduce(extractPoint, [])
+            console.log(skyCover)
 
             const config = {
                 type: 'line',
                 data: { 
-                    labels: times, 
+                    // labels: times, 
                     datasets: [{
                         label: 'Sky cover',
                         backgroundColor: 'rgb(255, 99, 132)',
@@ -39,6 +41,18 @@ function loadChart(url) {
                 },
                 options: {
                     scales: {
+                        x: {
+                            type: "time",  // <-- "time" instead of "timeseries"
+                            min: Date.now(),
+                            max: Date.now() + (24 * 60 * 60 * 1000 * 4),
+                            time: {
+                                unit: "hour",  // <-- that does the trick here
+                                displayFormats: {
+                                    hour: "D-M-Y H:00:00"
+                                },
+                                tooltipFormat: "D-M-Y H:00:00"// <-- same format for tooltip
+                            }
+                        },
                         y: {
                             title: {
                                 text: "% of sky cover/% chance of rain",
@@ -77,4 +91,3 @@ navigator.geolocation.getCurrentPosition(position => {
     loadChart("https://api.weather.gov/gridpoints/BOX/8,49")
 }
 )
-
