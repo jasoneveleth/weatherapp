@@ -13,6 +13,8 @@ function loadChart(url) {
 
             const skyCover = weather.skyCover.values.reduce(extractPoint, [])
             const precip = weather.probabilityOfPrecipitation.values.reduce(extractPoint, [])
+            const startTime = Date.now()
+            const endTime = Date.now() + (24 * 60 * 60 * 1000 * 2)
 
             // color for canvas background
             const plugin = {
@@ -21,12 +23,18 @@ function loadChart(url) {
                     const ctx = chart.canvas.getContext('2d');
                     const chartArea = chart.chartArea
 
+                    const chartWidth = chartArea.right - chartArea.left
+                    const sunset = 1620432000000
+                    const sunrise = 1620468000000
+                    const grayStart = chartArea.left + chartWidth * (sunset - startTime) / (endTime - startTime)
+                    const grayEnd = chartArea.left + chartWidth * (sunrise - startTime) / (endTime - startTime)
+
                     ctx.save();
                     ctx.globalCompositeOperation = 'destination-over';
                     ctx.fillStyle = 'lightGray';
-                    ctx.fillRect(chartArea.left, chartArea.top, chart.width/2, chartArea.bottom - chartArea.top);
-                    ctx.fillStyle = 'white';
-                    ctx.fillRect(0, chartArea.top, chart.width, chartArea.bottom - chartArea.top);
+                    ctx.fillRect(grayStart, chartArea.top, grayEnd - grayStart, chartArea.bottom - chartArea.top);
+                    // ctx.fillStyle = 'blue';
+                    // ctx.fillRect(0, chartArea.top, chart.width, chartArea.bottom - chartArea.top);
                     ctx.restore();
                 }
             };
@@ -58,8 +66,8 @@ function loadChart(url) {
                         x: {
                             // https://stackoverflow.com/questions/67322201/chart-js-v3-x-time-series-on-x-axis/67405387#67405387
                             type: "time",  // <-- "time" instead of "timeseries"
-                            min: Date.now(),
-                            max: Date.now() + (24 * 60 * 60 * 1000 * 2),
+                            min: startTime,
+                            max: endTime,
                         },
                         y: {
                             title: {
