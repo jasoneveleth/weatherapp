@@ -14,6 +14,23 @@ function loadChart(url) {
             const skyCover = weather.skyCover.values.reduce(extractPoint, [])
             const precip = weather.probabilityOfPrecipitation.values.reduce(extractPoint, [])
 
+            // color for canvas background
+            const plugin = {
+                id: 'custom_canvas_background_color',
+                beforeDraw: (chart) => {
+                    const ctx = chart.canvas.getContext('2d');
+                    const chartArea = chart.chartArea
+
+                    ctx.save();
+                    ctx.globalCompositeOperation = 'destination-over';
+                    ctx.fillStyle = 'lightGray';
+                    ctx.fillRect(chartArea.left, chartArea.top, chart.width/2, chartArea.bottom - chartArea.top);
+                    ctx.fillStyle = 'white';
+                    ctx.fillRect(0, chartArea.top, chart.width, chartArea.bottom - chartArea.top);
+                    ctx.restore();
+                }
+            };
+
             const config = {
                 type: 'line',
                 data: { 
@@ -29,6 +46,7 @@ function loadChart(url) {
                         data: precip,
                     }] 
                 },
+                plugins: [plugin],
                 options: {
                     interaction: {
                         mode: 'x',
