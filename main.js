@@ -1,33 +1,42 @@
-function formatdate(str) {
-    const iso8601 = str.match(/^[-0-9T:+]+/)[0]
-    const date = new Date(iso8601)
-    const day2str = { 0:"Sun", 1:"Mon", 2:"Tue", 3:"Wed", 4:"Thu", 5:"Fri", 6:"Sat" }
-    return day2str[date.getDay()] + " " + date.getHours() + ":00"
-}
-
 function loadChart(url) {
     console.log(url)
     fetch(url)
         .then(res => res.json())
         .then((obj) => {
-            const skyCover = obj.properties.skyCover.values
-
-            const times = skyCover.reduce((acc, val) =>  acc.concat([formatdate(val.validTime)]), [])
-            const percentages = skyCover.reduce((acc, val) =>  acc.concat(val.value), [])
-
-            const data = { 
-                labels: times, 
-                datasets: [{
-                    label: 'Sky cover',
-                    backgroundColor: 'rgb(255, 99, 132)',
-                    borderColor: 'rgb(255, 99, 132)',
-                    data: percentages,
-                }] 
+            function formatdate(str) {
+                const iso8601 = str.match(/^[-0-9T:]+/)[0]
+                const date = new Date(iso8601)
+                const day2str = { 0:"Sun", 1:"Mon", 2:"Tue", 3:"Wed", 4:"Thu", 5:"Fri", 6:"Sat" }
+                return day2str[date.getDay()] + " " + date.getHours() + ":00"
             }
+            function extractTime(acc, val) {
+                const iso8601 = val.validTime.match(/^[-0-9T:]+/)[0] + "Z"
+                return acc.concat([iso8601])
+            }
+            function extractPoint(acc, val) {
+                const iso8601 = val.validTime.match(/^[-0-9T:]+/)[0] + "Z"
+                return acc.concat([{t: iso8601, y: val.value}])
+            }
+            function extractValue(acc, val) {
+                return acc.concat([val.value])
+            }
+
+            const weather = obj.properties
+
+            const times = weather.skyCover.values.reduce(extractTime, [])
+            const skyCover = weather.skyCover.values.reduce(extractValue, [])
 
             const config = {
                 type: 'line',
-                data,
+                data: { 
+                    labels: times, 
+                    datasets: [{
+                        label: 'Sky cover',
+                        backgroundColor: 'rgb(255, 99, 132)',
+                        borderColor: 'rgb(255, 99, 132)',
+                        data: skyCover,
+                    }] 
+                },
                 options: {
                     scales: {
                         y: {
