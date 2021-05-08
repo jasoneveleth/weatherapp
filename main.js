@@ -91,15 +91,11 @@ function loadChart(url) {
 
 fetch("https://api.ipgeolocation.io/ipgeo?apiKey=f9c6b4f3257c49b4868e77210eec6b63")
     .then(res => res.json())
-    .then(obj => {
-        const latitude = obj.latitude;
-        const longitude = obj.longitude;
-        const url = 'https://api.weather.gov/points/' + latitude + ',' + longitude;
-        fetch(url)
-            .then(res => res.json())
-            .then(obj => obj.properties.forecastGridData)
-            .then(url => loadChart(url))
-    })
+    .then(obj => 'https://api.weather.gov/points/' + obj.latitude + ',' + obj.longitude)
+    .then(url => fetch(url))
+    .then(res => res.json())
+    .then(obj => obj.properties.forecastGridData)
+    .then(url => loadChart(url))
     .catch(err => {
         console.log(err)
         alert("Defaulting to Albany NY")
