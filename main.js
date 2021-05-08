@@ -83,10 +83,9 @@ function loadChart(url) {
             var myChart = new Chart(document.getElementById('myChart'), config);
         })
 }
-
-fetch("https://api.ipgeolocation.io/ipgeo?apiKey=f9c6b4f3257c49b4868e77210eec6b63")
+fetch("https://ipinfo.io/json")
     .then(res => res.json())
-    .then(obj => 'https://api.weather.gov/points/' + obj.latitude + ',' + obj.longitude)
+    .then(obj => 'https://api.weather.gov/points/' + obj.loc)
     .then(url => fetch(url))
     .then(res => res.json())
     .then(obj => obj.properties.forecastGridData)
