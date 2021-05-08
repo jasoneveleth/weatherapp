@@ -92,7 +92,7 @@ function loadChart(url) {
 $.getJSON("https://api.ipify.org?format=json", function(data) {
     return data.ip
 }).then(ip => {
-    fetch("http://ip-api.com/json/" + ip.ip.toString())
+    fetch("https://tools.keycdn.com/geo.json?host=" + ip.ip.toString())
         .then(res => res.json())
         .then(obj => {
             const latitude = obj.lat.toFixed(5);
