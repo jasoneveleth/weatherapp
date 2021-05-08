@@ -50,7 +50,7 @@ function loadChart(url) {
                         normalized: true,
                         parse: false,
                     }, {
-                        label: 'Precipitation',
+                        label: 'Precipitation Potential',
                         backgroundColor: 'rgb(97, 175, 239)',
                         borderColor: 'rgb(97, 175, 239)',
                         data: precip,
@@ -71,10 +71,6 @@ function loadChart(url) {
                             max: endTime,
                         },
                         y: {
-                            title: {
-                                text: "% of sky cover/% chance of rain",
-                                display: true,
-                            },
                             ticks: {
                                 callback: (value, index, values) => (value + '%')
                             },
