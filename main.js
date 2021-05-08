@@ -66,8 +66,7 @@ function loadChart(url) {
                     },
                     scales: {
                         x: {
-                            // https://stackoverflow.com/questions/67322201/chart-js-v3-x-time-series-on-x-axis/67405387#67405387
-                            type: "time",  // <-- "time" instead of "timeseries"
+                            type: "time",
                             min: startTime,
                             max: endTime,
                         },
