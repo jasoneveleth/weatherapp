@@ -1,15 +1,17 @@
 # weatherapp
 
 ### Todo
-- [ ] Weather
+- [ ] sunrise/sunset
+  - [ ] shade
+  - [ ] get values (parse by spliting string on comma), [library](https://github.com/Triggertrap/sun-js), [wiki](https://en.wikipedia.org/wiki/Sunrise_equation)
+- [ ] cache json
+
+- [x] Sky cover
+- [x] Precipitation (in inches expect)
 - [ ] Temp
 - [ ] Wind
-- [ ] Precipitation (in inches expect)
-- [ ] Sky cover
 
 - [ ] UV
-
-- [ ] Sunrise/sunset
 
 ### Options
 
