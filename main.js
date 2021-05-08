@@ -89,21 +89,19 @@ function loadChart(url) {
         })
 }
 
-$.getJSON("https://api.ipify.org?format=json", function(data) {
-    return data.ip
-}).then(ip => {
-    fetch("https://tools.keycdn.com/geo.json?host=" + ip.ip.toString())
-        .then(res => res.json())
-        .then(obj => {
-            const latitude = obj.lat.toFixed(5);
-            const longitude = obj.lon.toFixed(5);
-            const url = 'https://api.weather.gov/points/' + latitude + ',' + longitude;
-            fetch(url)
-                .then(res => res.json())
-                .then(obj => obj.properties.forecastGridData)
-                .then(url => loadChart(url))
-        })
-}).catch(err => {
-    alert("Defaulting to Albany NY")
-    loadChart("https://api.weather.gov/gridpoints/BOX/8,49")
-})
+fetch("https://api.ipgeolocation.io/ipgeo?apiKey=f9c6b4f3257c49b4868e77210eec6b63")
+    .then(res => res.json())
+    .then(obj => {
+        const latitude = obj.latitude;
+        const longitude = obj.longitude;
+        const url = 'https://api.weather.gov/points/' + latitude + ',' + longitude;
+        fetch(url)
+            .then(res => res.json())
+            .then(obj => obj.properties.forecastGridData)
+            .then(url => loadChart(url))
+    })
+    .catch(err => {
+        console.log(err)
+        alert("Defaulting to Albany NY")
+        loadChart("https://api.weather.gov/gridpoints/BOX/8,49")
+    })
