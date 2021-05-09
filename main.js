@@ -36,7 +36,6 @@ function loadChart(url) {
                         const pixelStart = chartArea.left + chartWidth * ((sunset - graphStartTime) / (graphEndTime - graphStartTime))
                         const pixelEnd = chartArea.left + chartWidth * ((sunrise - graphStartTime) / (graphEndTime - graphStartTime))
 
-                        console.log(sunrise, sunset)
                         const grayStart = pixelStart < chartArea.left ? chartArea.left : pixelStart
                         const grayEnd = pixelEnd > chartArea.right ? chartArea.right : pixelEnd
 
