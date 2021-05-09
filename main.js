@@ -1,8 +1,9 @@
 var currentLocation;
+const DAYS = 2
 
 function loadChart(url) {
     console.log("localURL:",url)
-    console.log("CurrentLocation:", currentLocation)
+    console.log("currentLocation:", currentLocation)
     fetch(url)
         .then(res => res.json())
         .then((obj) => {
@@ -16,8 +17,8 @@ function loadChart(url) {
 
             const skyCover = weather.skyCover.values.reduce(extractPoint, [])
             const precip = weather.probabilityOfPrecipitation.values.reduce(extractPoint, [])
-            const startTime = Date.now()
-            const endTime = Date.now() + (24 * 60 * 60 * 1000 * 2)
+            const graphStartTime = Date.now()
+            const graphEndTime = Date.now() + (86400000 * DAYS)
 
             // color for canvas background
             const plugin = {
@@ -27,24 +28,24 @@ function loadChart(url) {
                     const chartArea = chart.chartArea
 
                     const chartWidth = chartArea.right - chartArea.left
-                    //const sunset = 1620432000000
-                    //const sunrise = 1620468000000
-                    var sunset = new Date().sunset(currentLocation[0], currentLocation[1]);
-                    var sunrise = new Date().sunrise(currentLocation[0], currentLocation[1]);
 
-                    var grayStart = chartArea.left + chartWidth * ((sunset - startTime) / (endTime - startTime))
-                    var grayEnd = chartArea.left + chartWidth * ((sunrise - startTime) / (endTime - startTime))
+                    for (i = 0; i < (DAYS + 1); i++) {
+                        const sunset = new Date().sunset(currentLocation[0], currentLocation[1]).valueOf() + (86400000 * i)
+                        const sunrise = new Date().sunrise(currentLocation[0], currentLocation[1]).valueOf() + (86400000 * i)
 
-                    if (grayStart<chartArea.left) { grayStart=chartArea.left}
-                    if (grayEnd>chartArea.right) { grayEnd=chartArea.right}
+                        const pixelStart = chartArea.left + chartWidth * ((sunset - graphStartTime) / (graphEndTime - graphStartTime))
+                        const pixelEnd = chartArea.left + chartWidth * ((sunrise - graphStartTime) / (graphEndTime - graphStartTime))
 
-                    ctx.save();
-                    ctx.globalCompositeOperation = 'destination-over';
-                    ctx.fillStyle = 'lightGray';
-                    ctx.fillRect(grayStart, chartArea.top, grayEnd - grayStart, chartArea.bottom - chartArea.top);
-                    // ctx.fillStyle = 'blue';
-                    // ctx.fillRect(0, chartArea.top, chart.width, chartArea.bottom - chartArea.top);
-                    ctx.restore();
+                        console.log(sunrise, sunset)
+                        const grayStart = pixelStart < chartArea.left ? chartArea.left : pixelStart
+                        const grayEnd = pixelEnd > chartArea.right ? chartArea.right : pixelEnd
+
+                        ctx.save();
+                        ctx.globalCompositeOperation = 'destination-over';
+                        ctx.fillStyle = 'lightGray';
+                        ctx.fillRect(grayStart, chartArea.top, grayEnd - grayStart, chartArea.bottom - chartArea.top);
+                        ctx.restore();
+                    }
                 }
             };
 
@@ -76,8 +77,8 @@ function loadChart(url) {
                     scales: {
                         x: {
                             type: "time",
-                            min: startTime,
-                            max: endTime,
+                            min: graphStartTime,
+                            max: graphEndTime,
                         },
                         y: {
                             ticks: {
