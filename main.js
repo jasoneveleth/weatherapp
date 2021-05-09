@@ -1,3 +1,5 @@
+var currentLocation;
+
 function loadChart(url) {
     console.log("localURL:",url)
     console.log("CurrentLocation:", currentLocation)
@@ -92,7 +94,7 @@ function loadChart(url) {
 }
 fetch("https://ipinfo.io/json")
     .then(res => res.json())
-    .then(obj => {const currentLocation=obj.loc.split(","); return 'https://api.weather.gov/points/' + obj.loc;})
+    .then(obj => {currentLocation=obj.loc.split(","); return 'https://api.weather.gov/points/' + obj.loc;})
     .then(url => fetch(url))
     .then(res => res.json())
     .then(obj => obj.properties.forecastGridData)
