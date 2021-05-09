@@ -2,9 +2,11 @@
 
 ### Todo
 - [ ] sunrise/sunset
-  - [ ] shade
-  - [ ] get values (parse by spliting string on comma), [library](https://github.com/Triggertrap/sun-js), [wiki](https://en.wikipedia.org/wiki/Sunrise_equation)
+- [ ] get two more days worth of sunsets
+  - [x] shade
+  - [x] get values (parse by spliting string on comma), [library](https://github.com/Triggertrap/sun-js), [wiki](https://en.wikipedia.org/wiki/Sunrise_equation)
 - [ ] cache json
+
 
 - [x] Sky cover
 - [x] Precipitation (in inches expect)
