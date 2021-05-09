@@ -1,5 +1,8 @@
+var currentLocation;
+
 function loadChart(url) {
-    console.log(url)
+    console.log("localURL:",url)
+    console.log("CurrentLocation:", currentLocation)
     fetch(url)
         .then(res => res.json())
         .then((obj) => {
@@ -24,10 +27,16 @@ function loadChart(url) {
                     const chartArea = chart.chartArea
 
                     const chartWidth = chartArea.right - chartArea.left
-                    const sunset = 1620432000000
-                    const sunrise = 1620468000000
-                    const grayStart = chartArea.left + chartWidth * (sunset - startTime) / (endTime - startTime)
-                    const grayEnd = chartArea.left + chartWidth * (sunrise - startTime) / (endTime - startTime)
+                    //const sunset = 1620432000000
+                    //const sunrise = 1620468000000
+                    var sunset = new Date().sunset(currentLocation[0], currentLocation[1]);
+                    var sunrise = new Date().sunrise(currentLocation[0], currentLocation[1]);
+
+                    var grayStart = chartArea.left + chartWidth * ((sunset - startTime) / (endTime - startTime))
+                    var grayEnd = chartArea.left + chartWidth * ((sunrise - startTime) / (endTime - startTime))
+
+                    if (grayStart<chartArea.left) { grayStart=chartArea.left}
+                    if (grayEnd>chartArea.right) { grayEnd=chartArea.right}
 
                     ctx.save();
                     ctx.globalCompositeOperation = 'destination-over';
@@ -85,7 +94,7 @@ function loadChart(url) {
 }
 fetch("https://ipinfo.io/json")
     .then(res => res.json())
-    .then(obj => 'https://api.weather.gov/points/' + obj.loc)
+    .then(function(obj) { currentLocation=obj.loc.split(","); return 'https://api.weather.gov/points/' + obj.loc;})
     .then(url => fetch(url))
     .then(res => res.json())
     .then(obj => obj.properties.forecastGridData)
