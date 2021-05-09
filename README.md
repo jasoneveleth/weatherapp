@@ -9,8 +9,8 @@
 
 - [x] Sky cover
 - [x] Precipitation (in inches expect)
-- [ ] Temp
-- [ ] Wind
+- [x] Temp
+- [x] Wind
 
 - [ ] UV
 
