@@ -12,6 +12,10 @@
 - [x] Temp
 - [x] Wind
 
+- [ ] make aspect ratio in relation to chartArea, not chart itself
+- [ ] make all the chartAreas the same width
+- [ ] make wind purple
+
 - [ ] UV
 
 ### Options
