@@ -1,4 +1,4 @@
-var currentLocation;
+let currentLocation;
 const DAYS = 2
 const onedark = {
     mono1: '#abb2bf',
@@ -188,8 +188,8 @@ function loadCharts(url) {
                     }
                 }
             }
-            var skyprecip = new Chart(document.getElementById('sky-precip'), skyconfig);
-            var tempwindheat = new Chart(document.getElementById('temp-wind-heat'), tempconfig);
+            let skyprecip = new Chart(document.getElementById('sky-precip'), skyconfig);
+            let tempwindheat = new Chart(document.getElementById('temp-wind-heat'), tempconfig);
         })
 }
 fetch("https://ipinfo.io/json")
