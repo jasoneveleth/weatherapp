@@ -61,9 +61,7 @@ function loadCharts(url) {
                 normalized: true,
                 parse: false,
             }] 
-            skyconfig.options.scales.x.min = graphStartTime
-            skyconfig.options.scales.x.max = graphEndTime
-            skyconfig.options.scales.y.ticks = { callback: (value, index, values) => (value + '%') }
+            skyconfig.options.scales.y.ticks.callback = (value, index, values) => (value + '%')
             skyconfig.options.scales.y.min = 0
             skyconfig.options.scales.y.max = 100
 
@@ -84,9 +82,7 @@ function loadCharts(url) {
                 normalized: true,
                 parse: false,
             }] 
-            tempconfig.options.scales.x.min = graphStartTime
-            tempconfig.options.scales.x.max = graphEndTime
-            tempconfig.options.scales.y.ticks =  { callback: (value, index, values) => (value + '°') }
+            tempconfig.options.scales.y.ticks.callback =  (value, index, values) => (value + '°')
             tempconfig.options.scales.y.min = 20
             tempconfig.options.scales.y.max = 90
 
@@ -183,6 +179,8 @@ const genericconfig = {
         },
         scales: {
             x: {
+                min: graphStartTime,
+                max: graphEndTime,
                 type: "time",
                 ticks: {
                     maxRotation: 0,
