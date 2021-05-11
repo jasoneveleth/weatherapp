@@ -2,6 +2,7 @@ function setcolorscheme(argcolor) {
     colorscheme = argcolor
     Chart.defaults.color = colorscheme.fg
     document.getElementsByTagName('body')[0].style.background = colorscheme.bg
+    document.getElementById("location").style.color = colorscheme.fg
 }
 
 function faren(acc, val) {

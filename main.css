@@ -5,19 +5,19 @@ body {
     align-items: center;
 }
 
-h2 {
-    text-align: center;
-}
-
 .chart-container {
-    margin: 0px 20px;
     height: 200px;
-    width: 100%
+    width: 100%;
 }
 
-@media only screen and (min-width: 768px) {
+@media only screen and (orientation: landscape) and (max-device-width: 1200px) {
     .chart-container {
-        margin: 0px 20px;
+        width: 600px;
+    }
+}
+
+@media only screen and (min-device-width: 1200px) {
+    .chart-container {
         height: 250px;
         width: 900px;
     }
