@@ -1,13 +1,12 @@
-body{
-  Font-family: Georgia, sans-serif;
-}
-
-h2{
-    text-align: center;
 body {
+    Font-family: Georgia, sans-serif;
     display: flex;
     flex-direction: column;
     align-items: center;
+}
+
+h2 {
+    text-align: center;
 }
 
 .chart-container {
