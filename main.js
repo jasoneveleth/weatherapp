@@ -184,7 +184,11 @@ const genericconfig = {
 }
 
 // MAIN
-setcolorscheme(onelight)
+if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+    setcolorscheme(onedark)
+} else {
+    setcolorscheme(onelight)
+}
 fetch("https://ipinfo.io/json")
     .then(res => res.json())
     .then(obj => {currentLocationData = obj; return 'https://api.weather.gov/points/' + obj.loc;})
