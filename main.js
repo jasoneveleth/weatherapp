@@ -1,4 +1,4 @@
-let currentLocation;
+let currentLocationData;
 const DAYS = 2
 const onedark = {
     mono1: '#abb2bf',
@@ -42,7 +42,9 @@ document.getElementsByTagName('body')[0].style = "background: " + colorscheme.bg
 
 function loadCharts(url) {
     console.log("localURL:",url)
-    console.log("currentLocation:", currentLocation)
+    console.log("currentLocation: ", currentLocationData.city,',',currentLocationData.region)
+    document.getElementById("location").innerHTML="Weather statistics for " + currentLocationData.city + ', ' + currentLocationData.region
+    var currentLocation = currentLocationData.loc.split(",")
     fetch(url)
         .then(res => res.json())
         .then((obj) => {
@@ -194,7 +196,7 @@ function loadCharts(url) {
 }
 fetch("https://ipinfo.io/json")
     .then(res => res.json())
-    .then(obj => {currentLocation=obj.loc.split(","); return 'https://api.weather.gov/points/' + obj.loc;})
+    .then(obj => {currentLocationData=obj; return 'https://api.weather.gov/points/' + obj.loc;})
     .then(url => fetch(url))
     .then(res => res.json())
     .then(obj => obj.properties.forecastGridData)
