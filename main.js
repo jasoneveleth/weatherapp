@@ -186,7 +186,7 @@ const genericconfig = {
 setcolorscheme(onelight)
 fetch("https://ipinfo.io/json")
     .then(res => res.json())
-    .then(obj => {currentLocationData=obj; return 'https://api.weather.gov/points/' + obj.loc;})
+    .then(obj => {currentLocationData = obj; return 'https://api.weather.gov/points/' + obj.loc;})
     .then(url => fetch(url))
     .then(res => res.json())
     .then(obj => obj.properties.forecastGridData)
