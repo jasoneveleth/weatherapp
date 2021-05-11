@@ -1,4 +1,136 @@
-function faren(acc, val) {
+// GLOBALS --------------------------------------------------
+let colorscheme = onelight;
+let longlat;
+let charts = [];
+// END GLOBALS ----------------------------------------------
+
+// CONSTRUCTORS ---------------------------------------------
+// color for canvas background
+function Plugin() {
+    return {
+        id: 'custom_canvas_background_color',
+        beforeDraw: (chart) => {
+            const ctx = chart.canvas.getContext('2d');
+            const chartArea = chart.chartArea
+            const chartWidth = chartArea.right - chartArea.left
+
+            for (i = 0; i < (DAYS + 1); i++) {
+                const sunset = new Date().sunset(longlat[0], longlat[1]).valueOf() + (86400000 * i)
+                const sunrise = new Date().sunrise(longlat[0], longlat[1]).valueOf() + (86400000 * i)
+
+                const pixelStart = chartArea.left + chartWidth * ((sunset - graphStartTime) / (graphEndTime - graphStartTime))
+                const pixelEnd = chartArea.left + chartWidth * ((sunrise - graphStartTime) / (graphEndTime - graphStartTime))
+
+                const grayStart = pixelStart > chartArea.right ? chartArea.right : (pixelStart < chartArea.left ? chartArea.left : pixelStart)
+                const grayEnd = pixelEnd > chartArea.right ? chartArea.right : (pixelEnd < chartArea.left ? chartArea.left : pixelEnd)
+
+                ctx.save();
+                ctx.globalCompositeOperation = 'destination-over';
+                ctx.fillStyle = colorscheme.mono3;
+                ctx.fillRect(grayStart, chartArea.top, grayEnd - grayStart, chartArea.bottom - chartArea.top);
+                ctx.restore();
+            }
+        }
+    }
+}
+
+// generic config -- all the similarities of the sky and temp
+function Generic() {
+    return {
+        type: 'line',
+        data: {
+            datasets: [],
+        },
+        options: {
+            maintainAspectRatio: false,
+            interaction: {
+                mode: 'x',
+                intersect: false,
+            },
+            scales: {
+                x: {
+                    min: graphStartTime,
+                    max: graphEndTime,
+                    type: "time",
+                    ticks: {
+                        maxRotation: 0,
+                        color: colorscheme.fg,
+                    },
+                    grid: {
+                        color: colorscheme.mono2,
+                    },
+                },
+                y: {
+                    ticks: {
+                        crossAlign: 'start',
+                        color: colorscheme.fg,
+                    },
+                    grid: {
+                        color: colorscheme.mono2,
+                    },
+                }
+            }
+        }
+    }
+}
+
+function SkyConfig(points) {
+    let skyconfig = JSON.parse(JSON.stringify(Generic()))
+    skyconfig.plugins = [Plugin()] // can't be copied by json stringify
+    skyconfig.options.scales.y.afterSetDimensions = (axes) => { axes.maxWidth = 32; }
+    skyconfig.data.datasets = [{
+        label: 'Sky cover',
+        backgroundColor: colorscheme.mono2,
+        borderColor: colorscheme.mono2,
+        data: points.skyCover,
+        normalized: true,
+        parse: false,
+    }, {
+        label: 'Precipitation Potential',
+        backgroundColor: colorscheme.blue,
+        borderColor: colorscheme.blue,
+        data: points.precip,
+        normalized: true,
+        parse: false,
+    }] 
+    skyconfig.options.scales.y.ticks.callback = (value, index, values) => (value + '%')
+    skyconfig.options.scales.y.min = 0
+    skyconfig.options.scales.y.max = 100
+    return skyconfig
+}
+
+function TempConfig(points) {
+    let tempconfig = JSON.parse(JSON.stringify(Generic()))
+    tempconfig.plugins = [Plugin()] // can't be copied by json stringify
+    tempconfig.options.scales.y.afterSetDimensions = (axes) => { axes.maxWidth = 32; }
+    tempconfig.data.datasets = [{
+        label: 'Temperature',
+        backgroundColor: colorscheme.red1,
+        borderColor: colorscheme.red1,
+        data: points.temp,
+        normalized: true,
+        parse: false,
+    }, {
+        label: 'Wind Chill',
+        backgroundColor: colorscheme.purple,
+        borderColor: colorscheme.purple,
+        data: points.windChill,
+        normalized: true,
+        parse: false,
+    }] 
+    tempconfig.options.scales.y.ticks.callback =  (value, index, values) => (value + '°')
+    tempconfig.options.scales.y.min = 20
+    tempconfig.options.scales.y.max = 90
+    return tempconfig
+}
+// END CONSTRUCTORS -----------------------------------------
+
+// FUNCTIONS ------------------------------------------------
+function settitle(str) {
+    document.getElementById("location").innerHTML = str
+}
+
+function celcius2faren(acc, val) {
     if (val.value === null) {
         return acc.concat([{validTime: val.validTime, value: null}])
     } else {
@@ -14,99 +146,20 @@ function extractPoint(acc, val) {
 
 function loadCharts(weatherData) {
     const weather = weatherData.properties
-    weather.temperature.values = weather.temperature.values.reduce(faren, [])
-    weather.windChill.values = weather.windChill.values.reduce(faren, [])
+    weather.temperature.values = weather.temperature.values.reduce(celcius2faren, [])
+    weather.windChill.values = weather.windChill.values.reduce(celcius2faren, [])
 
     const skyCover = weather.skyCover.values.reduce(extractPoint, [])
     const precip = weather.probabilityOfPrecipitation.values.reduce(extractPoint, [])
     const temp = weather.temperature.values.reduce(extractPoint, [])
     const windChill = weather.windChill.values.reduce(extractPoint, [])
 
-    let skyconfig = JSON.parse(JSON.stringify(genericconfig))
-    skyconfig.plugins = [plugin] // can't be copied by json stringify
-    skyconfig.options.scales.y.afterSetDimensions = (axes) => { axes.maxWidth = 32; }
-    skyconfig.data.datasets = [{
-        label: 'Sky cover',
-        backgroundColor: colorscheme.mono2,
-        borderColor: colorscheme.mono2,
-        data: skyCover,
-        normalized: true,
-        parse: false,
-    }, {
-        label: 'Precipitation Potential',
-        backgroundColor: colorscheme.blue,
-        borderColor: colorscheme.blue,
-        data: precip,
-        normalized: true,
-        parse: false,
-    }] 
-    skyconfig.options.scales.y.ticks.callback = (value, index, values) => (value + '%')
-    skyconfig.options.scales.y.min = 0
-    skyconfig.options.scales.y.max = 100
-
-    let tempconfig = JSON.parse(JSON.stringify(genericconfig))
-    tempconfig.plugins = [plugin] // can't be copied by json stringify
-    tempconfig.options.scales.y.afterSetDimensions = (axes) => { axes.maxWidth = 32; }
-    tempconfig.data.datasets = [{
-        label: 'Temperature',
-        backgroundColor: colorscheme.red1,
-        borderColor: colorscheme.red1,
-        data: temp,
-        normalized: true,
-        parse: false,
-    }, {
-        label: 'Wind Chill',
-        backgroundColor: colorscheme.purple,
-        borderColor: colorscheme.purple,
-        data: windChill,
-        normalized: true,
-        parse: false,
-    }] 
-    tempconfig.options.scales.y.ticks.callback =  (value, index, values) => (value + '°')
-    tempconfig.options.scales.y.min = 20
-    tempconfig.options.scales.y.max = 90
+    const skyconfig = SkyConfig({'skyCover': skyCover, 'precip': precip})
+    const tempconfig = TempConfig({'temp': temp, 'windChill': windChill})
 
     let skyprecip = new Chart(document.getElementById('sky-precip'), skyconfig);
     let tempwindheat = new Chart(document.getElementById('temp-wind-heat'), tempconfig);
     charts = [skyprecip, tempwindheat]
-}
-
-const genericconfig = {
-    type: 'line',
-    data: {
-        datasets: [],
-    },
-    options: {
-        // aspectRatio: 5,
-        maintainAspectRatio: false,
-        interaction: {
-            mode: 'x',
-            intersect: false,
-        },
-        scales: {
-            x: {
-                min: graphStartTime,
-                max: graphEndTime,
-                type: "time",
-                ticks: {
-                    maxRotation: 0,
-                    color: colorscheme.fg,
-                },
-                grid: {
-                    color: colorscheme.mono2,
-                },
-            },
-            y: {
-                ticks: {
-                    crossAlign: 'start',
-                    color: colorscheme.fg,
-                },
-                grid: {
-                    color: colorscheme.mono2,
-                },
-            }
-        }
-    }
 }
 
 function setcolorscheme(argcolor) {
@@ -123,7 +176,10 @@ function setcolorscheme(argcolor) {
         charts[i].update()
     }
 }
+// END FUNCTIONS --------------------------------------------
 
+// MAIN
+// auto change dark mode
 window.matchMedia('(prefers-color-scheme: dark)')
     .addEventListener('change', event => {
         if (event.matches) {
@@ -133,54 +189,50 @@ window.matchMedia('(prefers-color-scheme: dark)')
         }
     })
 
-// MAIN
+// set initial dark mode
 if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
     setcolorscheme(onedark)
 } else {
     setcolorscheme(onelight)
 }
 
-// yeah thats just there... i know right
-const cachedWeatherData = localStorage.getItem('weatherData');
-const cachedLocationData = localStorage.getItem('locationData');
-if (cachedWeatherData!=null){
-    currentLocationData=JSON.parse(cachedLocationData)
-    currentLocation = currentLocationData.loc.split(",")
-    weatherData=JSON.parse(cachedWeatherData)
+if (localStorage.getItem('weatherData') != null) { // cached
+    locationData = JSON.parse(localStorage.getItem('locationData'))
+    settitle("Weather statistics for " + locationData.city + ', ' + locationData.region)
+    longlat = locationData.loc
 
-    document.getElementById("location").innerHTML="Weather statistics for " + currentLocationData.city + ', ' + 
-        currentLocationData.region
+    weatherData = JSON.parse(localStorage.getItem('weatherData'))
+    console.log("cached data:", weatherData)
     loadCharts(weatherData)
-} else {
+} else { // not cached
     fetch("https://ipinfo.io/json")
         .then(res => res.json())
-        .then(obj => {
-            currentLocationData = obj
-            currentLocation = currentLocationData.loc.split(",")
+        .then(obj => { // location data json
             localStorage.setItem('locationData', JSON.stringify(obj))
-
-            console.log("currentLocation: " + currentLocationData.city + ', ' + currentLocationData.region)
-            document.getElementById("location").innerHTML="Weather statistics for " + currentLocationData.city + ', ' + 
-                currentLocationData.region
+            longlat = obj.loc
+            settitle("Weather statistics for " + obj.city + ', ' + obj.region)
             localStorage.setItem('weatherData', JSON.stringify(obj))
-
             return 'https://api.weather.gov/points/' + obj.loc
         })
         .then(url => fetch(url))
         .then(res => res.json())
         .then(obj => obj.properties.forecastGridData)
-        .then(url => {
-            console.log("data:",url)
+        .then(url => { // weather api url
+            console.log("data:", url)
             return fetch(url)
         })
         .then(res => res.json())
-        .then(obj => {
+        .then(obj => { // weather json
             localStorage.setItem('weatherData', JSON.stringify(obj))
             loadCharts(obj)
         })
         .catch(err => {
             console.log(err)
             alert("Defaulting to Albany NY")
-            loadCharts("https://api.weather.gov/gridpoints/BOX/8,49")
+            console.log("https://api.weather.gov/gridpoints/BOX/8,49")
+            longlat = ["42.7003", "-73.8575"]
+            fetch("https://api.weather.gov/gridpoints/BOX/8,49")
+                .then(res => res.json())
+                .then(obj => loadCharts(obj))
         })
 }

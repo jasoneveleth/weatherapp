@@ -35,37 +35,6 @@ const onelight = {
     guide: '', // fade (fg, 20%)
     accent: '#526fff',
 }
-let colorscheme = onelight;
 
-let currentLocationData;
-let currentLocation;
-let charts = [];
 const graphStartTime = Date.now()
 const graphEndTime = Date.now() + (86400000 * DAYS)
-
-// color for canvas background
-const plugin = {
-    id: 'custom_canvas_background_color',
-    beforeDraw: (chart) => {
-        const ctx = chart.canvas.getContext('2d');
-        const chartArea = chart.chartArea
-        const chartWidth = chartArea.right - chartArea.left
-
-        for (i = 0; i < (DAYS + 1); i++) {
-            const sunset = new Date().sunset(currentLocation[0], currentLocation[1]).valueOf() + (86400000 * i)
-            const sunrise = new Date().sunrise(currentLocation[0], currentLocation[1]).valueOf() + (86400000 * i)
-
-            const pixelStart = chartArea.left + chartWidth * ((sunset - graphStartTime) / (graphEndTime - graphStartTime))
-            const pixelEnd = chartArea.left + chartWidth * ((sunrise - graphStartTime) / (graphEndTime - graphStartTime))
-
-            const grayStart = pixelStart > chartArea.right ? chartArea.right : (pixelStart < chartArea.left ? chartArea.left : pixelStart)
-            const grayEnd = pixelEnd > chartArea.right ? chartArea.right : (pixelEnd < chartArea.left ? chartArea.left : pixelEnd)
-
-            ctx.save();
-            ctx.globalCompositeOperation = 'destination-over';
-            ctx.fillStyle = colorscheme.mono3;
-            ctx.fillRect(grayStart, chartArea.top, grayEnd - grayStart, chartArea.bottom - chartArea.top);
-            ctx.restore();
-        }
-    }
-};
