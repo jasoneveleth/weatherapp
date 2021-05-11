@@ -1,8 +1,16 @@
 function setcolorscheme(argcolor) {
     colorscheme = argcolor
     Chart.defaults.color = colorscheme.fg
+    Chart.defaults.borderColor = colorscheme.mono3
     document.getElementsByTagName('body')[0].style.background = colorscheme.bg
     document.getElementById("location").style.color = colorscheme.fg
+    for (let i = 0; i < charts.length; i++) {
+        charts[i].options.scales.x.ticks.color = colorscheme.fg
+        charts[i].options.scales.y.ticks.color = colorscheme.fg
+        charts[i].options.scales.x.grid.color = colorscheme.mono3
+        charts[i].options.scales.y.grid.color = colorscheme.mono3
+        charts[i].update()
+    }
 }
 
 function faren(acc, val) {
@@ -83,6 +91,7 @@ function loadCharts(url) {
 
             let skyprecip = new Chart(document.getElementById('sky-precip'), skyconfig);
             let tempwindheat = new Chart(document.getElementById('temp-wind-heat'), tempconfig);
+            charts = [skyprecip, tempwindheat]
         })
 }
 
@@ -126,6 +135,7 @@ const onelight = {
 let colorscheme = onelight
 
 let currentLocationData;
+let charts = [];
 const graphStartTime = Date.now()
 const graphEndTime = Date.now() + (86400000 * DAYS)
 
