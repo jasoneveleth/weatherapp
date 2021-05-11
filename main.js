@@ -28,10 +28,10 @@ function extractPoint(acc, val) {
 }
 
 function loadCharts(url) {
-    console.log("localURL:",url)
-    console.log("currentLocation: ", currentLocationData.city,',',currentLocationData.region)
+    console.log("data:",url)
+    console.log("currentLocation: " + currentLocationData.city + ', ' + currentLocationData.region)
     document.getElementById("location").innerHTML="Weather statistics for " + currentLocationData.city + ', ' + currentLocationData.region
-    let currentLocation = currentLocationData.loc.split(",")
+    currentLocation = currentLocationData.loc.split(",")
     fetch(url)
         .then(res => res.json())
         .then((obj) => {
@@ -136,6 +136,7 @@ const onelight = {
 let colorscheme = onelight
 
 let currentLocationData;
+let currentLocation;
 let charts = [];
 const graphStartTime = Date.now()
 const graphEndTime = Date.now() + (86400000 * DAYS)
