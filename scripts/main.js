@@ -12,15 +12,9 @@ function extractPoint(acc, val) {
     return acc.concat([{x: date.valueOf(), y: val.value}])
 }
 
-function loadCharts(url) {
-    console.log("data:",url)
-    console.log("currentLocation: " + currentLocationData.city + ', ' + currentLocationData.region)
-    document.getElementById("location").innerHTML="Weather statistics for " + currentLocationData.city + ', ' + currentLocationData.region
-    currentLocation = currentLocationData.loc.split(",")
-    fetch(url)
-        .then(res => res.json())
-        .then((obj) => {
-            const weather = obj.properties
+function loadCharts(weatherData) {
+
+            const weather = weatherData.properties
             weather.temperature.values = weather.temperature.values.reduce(faren, [])
             weather.windChill.values = weather.windChill.values.reduce(faren, [])
 
@@ -76,7 +70,6 @@ function loadCharts(url) {
             let skyprecip = new Chart(document.getElementById('sky-precip'), skyconfig);
             let tempwindheat = new Chart(document.getElementById('temp-wind-heat'), tempconfig);
             charts = [skyprecip, tempwindheat]
-        })
 }
 
 const genericconfig = {
@@ -147,15 +140,51 @@ if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').match
 } else {
     setcolorscheme(onelight)
 }
+
+// yeah thats just there... i know right
+const cachedWeatherData = localStorage.getItem('weatherData');
+const cachedLocationData = localStorage.getItem('locationData');
+if (cachedWeatherData!=null){
+     currentLocationData=JSON.parse(cachedLocationData)
+     currentLocation = currentLocationData.loc.split(",")
+     weatherData=JSON.parse(cachedWeatherData)
+
+document.getElementById("location").innerHTML="Weather statistics for " + currentLocationData.city + ', ' + 
+        currentLocationData.region
+     loadCharts(weatherData)
+
+
+}else{
+
 fetch("https://ipinfo.io/json")
     .then(res => res.json())
-    .then(obj => {currentLocationData = obj; return 'https://api.weather.gov/points/' + obj.loc;})
+    .then(obj => {
+        currentLocationData = obj
+        currentLocation = currentLocationData.loc.split(",")
+    	localStorage.setItem('locationData', JSON.stringify(obj))
+
+    	console.log("currentLocation: " + currentLocationData.city + ', ' + currentLocationData.region)
+        document.getElementById("location").innerHTML="Weather statistics for " + currentLocationData.city + ', ' + 
+        currentLocationData.region
+        localStorage.setItem('weatherData', JSON.stringify(obj))
+
+	    return 'https://api.weather.gov/points/' + obj.loc
+	})
     .then(url => fetch(url))
     .then(res => res.json())
     .then(obj => obj.properties.forecastGridData)
-    .then(url => loadCharts(url))
+    .then(url => {
+	    console.log("data:",url)
+        return fetch(url)
+    })
+    .then(res => res.json())
+    .then(obj => {
+    	localStorage.setItem('weatherData', JSON.stringify(obj))
+	    loadCharts(obj)
+	})
     .catch(err => {
         console.log(err)
         alert("Defaulting to Albany NY")
-        loadChart("https://api.weather.gov/gridpoints/BOX/8,49")
+        loadCharts("https://api.weather.gov/gridpoints/BOX/8,49")
     })
+}
