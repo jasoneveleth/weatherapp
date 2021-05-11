@@ -46,7 +46,7 @@ function loadCharts(url) {
 
             let skyconfig = JSON.parse(JSON.stringify(genericconfig))
             skyconfig.plugins = [plugin] // can't be copied by json stringify
-            skyconfig.options.scales.y.afterSetDimensions = (axes) => { axes.maxWidth = 32; console.log(axes.width); }
+            skyconfig.options.scales.y.afterSetDimensions = (axes) => { axes.maxWidth = 32; }
             skyconfig.data.datasets = [{
                 label: 'Sky cover',
                 backgroundColor: colorscheme.mono2,
@@ -68,7 +68,7 @@ function loadCharts(url) {
 
             let tempconfig = JSON.parse(JSON.stringify(genericconfig))
             tempconfig.plugins = [plugin] // can't be copied by json stringify
-            tempconfig.options.scales.y.afterSetDimensions = (axes) => { axes.maxWidth = 32; console.log(axes.width); }
+            tempconfig.options.scales.y.afterSetDimensions = (axes) => { axes.maxWidth = 32; }
             tempconfig.data.datasets = [{
                 label: 'Temperature',
                 backgroundColor: colorscheme.red1,
