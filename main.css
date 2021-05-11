@@ -4,4 +4,22 @@ body{
 
 h2{
     text-align: center;
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.chart-container {
+    margin: 0px 20px;
+    height: 200px;
+    width: 100%
+}
+
+@media only screen and (min-width: 768px) {
+    .chart-container {
+        margin: 0px 20px;
+        height: 250px;
+        width: 900px;
+    }
 }
