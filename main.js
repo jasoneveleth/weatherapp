@@ -7,8 +7,8 @@ function setcolorscheme(argcolor) {
     for (let i = 0; i < charts.length; i++) {
         charts[i].options.scales.x.ticks.color = colorscheme.fg
         charts[i].options.scales.y.ticks.color = colorscheme.fg
-        charts[i].options.scales.x.grid.color = colorscheme.mono3
-        charts[i].options.scales.y.grid.color = colorscheme.mono3
+        charts[i].options.scales.x.grid.color = colorscheme.mono2
+        charts[i].options.scales.y.grid.color = colorscheme.mono2
         charts[i].update()
     }
 }
@@ -44,8 +44,8 @@ function loadCharts(url) {
             const temp = weather.temperature.values.reduce(extractPoint, [])
             const windChill = weather.windChill.values.reduce(extractPoint, [])
 
-
             let skyconfig = JSON.parse(JSON.stringify(genericconfig))
+            skyconfig.plugins = [plugin] // can't be copied by json stringify
             skyconfig.data.datasets = [{
                 label: 'Sky cover',
                 backgroundColor: colorscheme.mono2,
@@ -68,6 +68,7 @@ function loadCharts(url) {
             skyconfig.options.scales.y.max = 100
 
             let tempconfig = JSON.parse(JSON.stringify(genericconfig))
+            tempconfig.plugins = [plugin] // can't be copied by json stringify
             tempconfig.data.datasets = [{
                 label: 'Temperature',
                 backgroundColor: colorscheme.red1,
@@ -160,7 +161,7 @@ const plugin = {
 
             ctx.save();
             ctx.globalCompositeOperation = 'destination-over';
-            ctx.fillStyle = 'lightGray';
+            ctx.fillStyle = colorscheme.mono3;
             ctx.fillRect(grayStart, chartArea.top, grayEnd - grayStart, chartArea.bottom - chartArea.top);
             ctx.restore();
         }
@@ -172,7 +173,6 @@ const genericconfig = {
     data: {
         datasets: [],
     },
-    plugins: [plugin],
     options: {
         // aspectRatio: 5,
         maintainAspectRatio: false,
@@ -185,22 +185,36 @@ const genericconfig = {
                 type: "time",
                 ticks: {
                     maxRotation: 0,
+                    color: colorscheme.fg,
+                },
+                grid: {
+                    color: colorscheme.mono2,
                 },
             },
             y: {
+                ticks: {
+                    crossAlign: 'start',
+                    color: colorscheme.fg,
+                },
+                afterSetDimensions: (scale) => {
+                    scale.maxWidth = 30;
+                },
+                grid: {
+                    color: colorscheme.mono2,
+                },
             }
         }
     }
 }
 
 window.matchMedia('(prefers-color-scheme: dark)')
-      .addEventListener('change', event => {
-  if (event.matches) {
-      setcolorscheme(onedark)
-  } else {
-      setcolorscheme(onelight)
-  }
-})
+    .addEventListener('change', event => {
+        if (event.matches) {
+            setcolorscheme(onedark)
+        } else {
+            setcolorscheme(onelight)
+        }
+    })
 
 // MAIN
 if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
