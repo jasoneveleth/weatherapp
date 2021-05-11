@@ -183,8 +183,17 @@ const genericconfig = {
     }
 }
 
+window.matchMedia('(prefers-color-scheme: dark)')
+      .addEventListener('change', event => {
+  if (event.matches) {
+      setcolorscheme(onedark)
+  } else {
+      setcolorscheme(onelight)
+  }
+})
+
 // MAIN
-if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
     setcolorscheme(onedark)
 } else {
     setcolorscheme(onelight)
