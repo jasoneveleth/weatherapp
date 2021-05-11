@@ -5,6 +5,10 @@ body {
     align-items: center;
 }
 
+h2 {
+    text-align: center;
+}
+
 .chart-container {
     height: 200px;
     width: 100%;
