@@ -2,8 +2,8 @@
 const currTime = Date.now()
 const twoDaysTime = Date.now() + (86400000 * DAYS)
 let colorscheme = onelight;
-let longlat;
-let charts = [];
+let longlat; // needed to calculate sunrise/sunset
+let charts = []; // needed to update colorscheme
 // END GLOBALS ----------------------------------------------
 
 // CONSTRUCTORS ---------------------------------------------
