@@ -5,17 +5,18 @@
 - [x] get two more days worth of sunsets
   - [x] shade
   - [x] get values (parse by spliting string on comma), [library](https://github.com/Triggertrap/sun-js), [wiki](https://en.wikipedia.org/wiki/Sunrise_equation)
-- [ ] cache json
+- [x] cache json
 
 - [x] Sky cover
 - [x] Precipitation (in inches expect)
 - [x] Temp
 - [x] Wind
 
-- [ ] make aspect ratio in relation to chartArea, not chart itself
-- [ ] make all the chartAreas the same width
-- [ ] make wind purple
+- [x] make aspect ratio in relation to chartArea, not chart itself
+- [x] make all the chartAreas the same width
+- [x] make wind purple
 
+- [ ] expire the json after 1 hour
 - [ ] UV
 
 ### Options
