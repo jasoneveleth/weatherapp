@@ -199,7 +199,7 @@ if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').match
 if (localStorage.getItem('weatherData') != null) { // cached
     locationData = JSON.parse(localStorage.getItem('locationData'))
     settitle("Weather statistics for " + locationData.city + ', ' + locationData.region)
-    longlat = locationData.loc
+    longlat = locationData.loc.split(',')
 
     weatherData = JSON.parse(localStorage.getItem('weatherData'))
     console.log("cached data:", weatherData)
@@ -209,7 +209,7 @@ if (localStorage.getItem('weatherData') != null) { // cached
         .then(res => res.json())
         .then(obj => { // location data json
             localStorage.setItem('locationData', JSON.stringify(obj))
-            longlat = obj.loc
+            longlat = obj.loc.split(',')
             settitle("Weather statistics for " + obj.city + ', ' + obj.region)
             localStorage.setItem('weatherData', JSON.stringify(obj))
             return 'https://api.weather.gov/points/' + obj.loc
