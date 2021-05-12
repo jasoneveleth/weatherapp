@@ -36,5 +36,3 @@ const onelight = {
     accent: '#526fff',
 }
 
-const graphStartTime = Date.now()
-const graphEndTime = Date.now() + (86400000 * DAYS)

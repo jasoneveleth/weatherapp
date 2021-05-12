@@ -1,4 +1,6 @@
 // GLOBALS --------------------------------------------------
+const currTime = Date.now()
+const twoDaysTime = Date.now() + (86400000 * DAYS)
 let colorscheme = onelight;
 let longlat;
 let charts = [];
@@ -18,8 +20,8 @@ function Plugin() {
                 const sunset = new Date().sunset(longlat[0], longlat[1]).valueOf() + (86400000 * i)
                 const sunrise = new Date().sunrise(longlat[0], longlat[1]).valueOf() + (86400000 * i)
 
-                const pixelStart = chartArea.left + chartWidth * ((sunset - graphStartTime) / (graphEndTime - graphStartTime))
-                const pixelEnd = chartArea.left + chartWidth * ((sunrise - graphStartTime) / (graphEndTime - graphStartTime))
+                const pixelStart = chartArea.left + chartWidth * ((sunset - currTime) / (twoDaysTime - currTime))
+                const pixelEnd = chartArea.left + chartWidth * ((sunrise - currTime) / (twoDaysTime - currTime))
 
                 const grayStart = pixelStart > chartArea.right ? chartArea.right : (pixelStart < chartArea.left ? chartArea.left : pixelStart)
                 const grayEnd = pixelEnd > chartArea.right ? chartArea.right : (pixelEnd < chartArea.left ? chartArea.left : pixelEnd)
@@ -49,8 +51,8 @@ function Generic() {
             },
             scales: {
                 x: {
-                    min: graphStartTime,
-                    max: graphEndTime,
+                    min: currTime,
+                    max: twoDaysTime,
                     type: "time",
                     ticks: {
                         maxRotation: 0,
