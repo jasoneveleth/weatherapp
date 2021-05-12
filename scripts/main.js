@@ -75,7 +75,7 @@ function Generic() {
 }
 
 function SkyConfig(points) {
-    let skyconfig = JSON.parse(JSON.stringify(Generic()))
+    const skyconfig = JSON.parse(JSON.stringify(Generic()))
     skyconfig.plugins = [Plugin()] // can't be copied by json stringify
     skyconfig.options.scales.y.afterSetDimensions = (axes) => { axes.maxWidth = 32; }
     skyconfig.data.datasets = [{
@@ -100,7 +100,7 @@ function SkyConfig(points) {
 }
 
 function TempConfig(points) {
-    let tempconfig = JSON.parse(JSON.stringify(Generic()))
+    const tempconfig = JSON.parse(JSON.stringify(Generic()))
     tempconfig.plugins = [Plugin()] // can't be copied by json stringify
     tempconfig.options.scales.y.afterSetDimensions = (axes) => { axes.maxWidth = 32; }
     tempconfig.data.datasets = [{
@@ -157,8 +157,8 @@ function loadCharts(weatherData) {
     const skyconfig = SkyConfig({'skyCover': skyCover, 'precip': precip})
     const tempconfig = TempConfig({'temp': temp, 'windChill': windChill})
 
-    let skyprecip = new Chart(document.getElementById('sky-precip'), skyconfig);
-    let tempwindheat = new Chart(document.getElementById('temp-wind-heat'), tempconfig);
+    const skyprecip = new Chart(document.getElementById('sky-precip'), skyconfig);
+    const tempwindheat = new Chart(document.getElementById('temp-wind-heat'), tempconfig);
     charts = [skyprecip, tempwindheat]
 }
 
