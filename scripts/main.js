@@ -228,6 +228,7 @@ if (localStorage.getItem('weatherData') != null) { // cached
         })
         .catch(err => {
             console.log(err)
+            localStorage.clear()
             alert("Defaulting to Albany NY")
             console.log("https://api.weather.gov/gridpoints/BOX/8,49")
             longlat = ["42.7003", "-73.8575"]
