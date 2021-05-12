@@ -216,7 +216,6 @@ if (weatherData != null
             localStorage.setItem('locationData', JSON.stringify(obj))
             longlat = obj.loc.split(',')
             settitle("Weather statistics for " + obj.city + ', ' + obj.region)
-            localStorage.setItem('weatherData', JSON.stringify(obj))
             return 'https://api.weather.gov/points/' + obj.loc
         })
         .then(url => fetch(url))
