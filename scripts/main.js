@@ -1,6 +1,7 @@
 // GLOBALS --------------------------------------------------
 const currTime = Date.now()
 const twoDaysTime = Date.now() + (86400000 * DAYS)
+const expiryTime = 1 * 60 * 1000 // one minute
 let colorscheme = onelight;
 let longlat; // needed to calculate sunrise/sunset
 let charts = []; // needed to update colorscheme
@@ -198,15 +199,17 @@ if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').match
     setcolorscheme(onelight)
 }
 
-if (localStorage.getItem('weatherData') != null) { // cached
+const weatherData = JSON.parse(localStorage.getItem('weatherData'))
+if (weatherData != null 
+        && weatherData.now != undefined 
+        && weatherData.now > Date.now() - expiryTime) { // use cache
     locationData = JSON.parse(localStorage.getItem('locationData'))
     settitle("Weather statistics for " + locationData.city + ', ' + locationData.region)
     longlat = locationData.loc.split(',')
 
-    weatherData = JSON.parse(localStorage.getItem('weatherData'))
     console.log("cached data:", weatherData)
     loadCharts(weatherData)
-} else { // not cached
+} else { // don't use cache
     fetch("https://ipinfo.io/json")
         .then(res => res.json())
         .then(obj => { // location data json
@@ -225,6 +228,7 @@ if (localStorage.getItem('weatherData') != null) { // cached
         })
         .then(res => res.json())
         .then(obj => { // weather json
+            obj.now = Date.now()
             localStorage.setItem('weatherData', JSON.stringify(obj))
             loadCharts(obj)
         })
