@@ -16,7 +16,7 @@
 - [x] make all the chartAreas the same width
 - [x] make wind purple
 
-- [ ] expire the json after 1 hour
+- [x] expire the json after 1 hour
 - [ ] UV
 
 ### Options
