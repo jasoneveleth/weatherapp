@@ -130,7 +130,7 @@ function TempConfig(points) {
     }] 
     tempconfig.options.scales.y.ticks.callback =  (value, index, values) => (value + '°')
     tempconfig.options.scales.y.min = 20
-    tempconfig.options.scales.y.max = 90
+    tempconfig.options.scales.y.max = 120
     return tempconfig
 }
 // END CONSTRUCTORS -----------------------------------------
@@ -157,6 +157,11 @@ function extractPoint(acc, val) {
     return acc.concat([{x: date.valueOf(), y: val.value}])
 }
 
+function avg(arr) {
+    const sum = (acc,val) => acc + val.y
+    return arr.reduce(sum, 0) / arr.length
+}
+
 function loadCharts(weatherData) {
     const weather = weatherData.properties
     celcius2faren(weather.temperature)
@@ -171,6 +176,11 @@ function loadCharts(weatherData) {
 
     const skyconfig = SkyConfig({'skyCover': skyCover, 'precip': precip})
     const tempconfig = TempConfig({'temp': temp, 'windChill': windChill, 'heatIndex': heatIndex})
+
+    // make temp graph a 40 degree window around avg
+    const average = Math.floor(avg(temp) / 10) * 10
+    tempconfig.options.scales.y.min = average - 20
+    tempconfig.options.scales.y.max = average + 20
 
     const skyprecip = new Chart(document.getElementById('sky-precip'), skyconfig);
     const tempwindheat = new Chart(document.getElementById('temp-wind-heat'), tempconfig);
