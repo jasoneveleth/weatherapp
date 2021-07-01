@@ -1,7 +1,7 @@
 // GLOBALS --------------------------------------------------
 const currTime = Date.now()
 const twoDaysTime = Date.now() + (86400000 * DAYS)
-const expiryTime = 1 * 60 * 1000 // one minute
+const expiryTime = 15 * 60 * 1000 // 15 mins
 let colorscheme = onelight;
 let longlat; // needed to calculate sunrise/sunset
 let charts = []; // needed to update colorscheme
