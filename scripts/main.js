@@ -115,9 +115,16 @@ function TempConfig(points) {
         parse: false,
     }, {
         label: 'Wind Chill',
+        backgroundColor: colorscheme.cyan,
+        borderColor: colorscheme.cyan,
+        data: points.windChill,
+        normalized: true,
+        parse: false,
+    }, {
+        label: 'Heat Index',
         backgroundColor: colorscheme.purple,
         borderColor: colorscheme.purple,
-        data: points.windChill,
+        data: points.heatIndex,
         normalized: true,
         parse: false,
     }] 
@@ -151,14 +158,16 @@ function loadCharts(weatherData) {
     const weather = weatherData.properties
     weather.temperature.values = weather.temperature.values.reduce(celcius2faren, [])
     weather.windChill.values = weather.windChill.values.reduce(celcius2faren, [])
+    weather.heatIndex.values = weather.heatIndex.values.reduce(celcius2faren, [])
 
     const skyCover = weather.skyCover.values.reduce(extractPoint, [])
     const precip = weather.probabilityOfPrecipitation.values.reduce(extractPoint, [])
     const temp = weather.temperature.values.reduce(extractPoint, [])
     const windChill = weather.windChill.values.reduce(extractPoint, [])
+    const heatIndex = weather.heatIndex.values.reduce(extractPoint, [])
 
     const skyconfig = SkyConfig({'skyCover': skyCover, 'precip': precip})
-    const tempconfig = TempConfig({'temp': temp, 'windChill': windChill})
+    const tempconfig = TempConfig({'temp': temp, 'windChill': windChill, 'heatIndex': heatIndex})
 
     const skyprecip = new Chart(document.getElementById('sky-precip'), skyconfig);
     const tempwindheat = new Chart(document.getElementById('temp-wind-heat'), tempconfig);
