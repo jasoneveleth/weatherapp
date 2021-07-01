@@ -140,12 +140,15 @@ function settitle(str) {
     document.getElementById("location").innerHTML = str
 }
 
-function celcius2faren(acc, val) {
-    if (val.value === null) {
-        return acc.concat([{validTime: val.validTime, value: null}])
-    } else {
-        return acc.concat([{validTime: val.validTime, value: val.value * 9 / 5 + 32}])
+function celcius2faren(obj) {
+    function convert(acc, val) {
+        if (val.value === null) {
+            return acc.concat([{validTime: val.validTime, value: null}])
+        } else {
+            return acc.concat([{validTime: val.validTime, value: val.value * 9 / 5 + 32}])
+        }
     }
+    obj.values = obj.values.reduce(convert, [])
 }
 
 function extractPoint(acc, val) {
@@ -156,9 +159,9 @@ function extractPoint(acc, val) {
 
 function loadCharts(weatherData) {
     const weather = weatherData.properties
-    weather.temperature.values = weather.temperature.values.reduce(celcius2faren, [])
-    weather.windChill.values = weather.windChill.values.reduce(celcius2faren, [])
-    weather.heatIndex.values = weather.heatIndex.values.reduce(celcius2faren, [])
+    celcius2faren(weather.temperature)
+    celcius2faren(weather.windChill)
+    celcius2faren(weather.heatIndex)
 
     const skyCover = weather.skyCover.values.reduce(extractPoint, [])
     const precip = weather.probabilityOfPrecipitation.values.reduce(extractPoint, [])
