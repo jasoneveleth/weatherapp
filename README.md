@@ -19,6 +19,8 @@
 - [x] expire the json after 1 hour
 - [ ] UV
 
+- [values](https://stackoverflow.com/questions/31631354/how-to-display-data-values-on-chart-js/37550150)
+
 ### Options
 
 * "elevation":
